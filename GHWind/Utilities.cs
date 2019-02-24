@@ -9,6 +9,7 @@ using System.Drawing;
 /*
  * Utilities.cs
  * Copyright 2017 Christoph Waibel <chwaibel@student.ethz.ch>
+ * Modified by Erron Estrado 2019
  * 
  * This work is licensed under the GNU GPL license version 3.
 */

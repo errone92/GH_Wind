@@ -9,8 +9,8 @@ using System.Drawing;
 
 /*
  * GHGetPressure.cs
- * Written by Erron Estrado <erron_e@hotmail.com> (2019) based on GHVisualizeCp by Christoph Waibel
  * Copyright 2017 Christoph Waibel <chwaibel@student.ethz.ch>
+ * Written by Erron Estrado <erron_e@hotmail.com> (2019) based on GHVisualizeCp by Christoph Waibel
  * 
  * This work is licensed under the GNU GPL license version 3.
 */
