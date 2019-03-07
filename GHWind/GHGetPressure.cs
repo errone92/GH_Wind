@@ -54,7 +54,7 @@ namespace GHWind
             pManager.AddNumberParameter("font size", "font size", "font size", GH_ParamAccess.item);
             pManager[4].Optional = true;
 
-            //pManager.AddPointParameter("ref z", "ref z", "reference height. usually should be the building height. Make sure, the point is somehow in the Y-middle of the domain. Point3d", GH_ParamAccess.item);
+            pManager.AddPointParameter("ref z", "ref z", "reference height. usually should be the building height. Make sure, the point is somehow in the Y-middle of the domain. Point3d", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -98,8 +98,8 @@ namespace GHWind
             double fontsize = 0.5;
             DA.GetData(4, ref fontsize);
 
-            //Point3d zrefp = new Point3d();
-            //if (!DA.GetData(8, ref zrefp)) { return; }
+            Point3d zrefp = new Point3d();
+            if (!DA.GetData(5, ref zrefp)) { return; }
 
             string face = "Baskerville";
             bool bold = false;
@@ -119,31 +119,59 @@ namespace GHWind
 
             foreach (Mesh msh in mshP)
             {
-                double[] Press = new double[msh.Vertices.Count];
+                double[] Press = new double[msh.Faces.Count];
                 Color[] Cols = new Color[msh.Vertices.Count];
                 Mesh mshcol = new Mesh();
                 List<Curve> lst = new List<Curve>();
 
-                for (int u = 0; u < msh.Vertices.Count; u++)
+                for (int u = 0; u < msh.Faces.Count; u++)
                 {
                     //double[] vref = de.get_velocity(0 - origin[0], msh.Vertices[u].Y - origin[1], msh.Vertices[u].Z - origin[2]);
                     //Vector3d vrefv = new Vector3d(vref[0], vref[1], vref[2]);
                     //double vrefl = vrefv.Length;
-                    //double pref = de.get_pressure(0 - origin[0], msh.Vertices[u].Y - origin[1], msh.Vertices[u].Z - origin[2]);
+                    double pref = de.get_pressure(zrefp[0] - origin[0], zrefp[1] - origin[1], zrefp[2] - origin[2]);
                     //double pdyn = 0.5 * roh * Math.Pow(vrefl, 2);
-                    Press[u] = de.get_pressure(msh.Vertices[u].X - origin[0], msh.Vertices[u].Y - origin[1], msh.Vertices[u].Z - origin[2]);
 
+                    //Press[u] = de.get_pressure(msh.Vertices[u].X - origin[0], msh.Vertices[u].Y - origin[1], msh.Vertices[u].Z - origin[2]);
+
+                    MeshFace mFace = msh.Faces[u];
+                    Point3d pt1 = msh.Vertices[mFace.A];
+                    Point3d pt2 = msh.Vertices[mFace.B];
+                    Point3d pt3 = msh.Vertices[mFace.C];
+                    Point3d pt4 = msh.Vertices[mFace.D];
+
+                    NurbsSurface faceSrf = NurbsSurface.CreateFromCorners(pt1, pt2, pt3, pt4);
+                    Point3d faceCenter = AreaMassProperties.Compute(faceSrf).Centroid;
+                    double uCoord;
+                    double vCoord;
+
+                    faceSrf.ClosestPoint(faceCenter, out uCoord, out vCoord);
+                    Vector3d faceNormal = faceSrf.NormalAt(uCoord, vCoord);
+
+                    faceNormal.Unitize();
+                    faceNormal *= 0.01;
+
+                    faceCenter += faceNormal;
+
+                    double pFace = de.get_pressure(faceCenter.X - origin[0], faceCenter.Y - origin[1], faceCenter.Z - origin[2]);
+
+                    Press[u] = pFace - pref;
+
+                    //double[] U = de.get_velocity(faceCenter.X - origin[0], faceCenter.Y - origin[1], faceCenter.Z - origin[2]);
+                    //Vector3d Uvec = new Vector3d(U[0], U[1], U[2]);
+                    //double velocity = Uvec.Length;
+                    //Press[u] = 0.5 * 1.225 * Math.Pow(velocity, 2);
 
                     //Cp[u] = (px - pref) / pdyn;
                     Ptree.Add(Press[u], new Grasshopper.Kernel.Data.GH_Path(branch));
                     //Cols[u] = Utilities.GetRGB(colourSheme, Cp[u], max, min);
-                    Cols[u] = Utilities.GetAbsoluteRGB(colourSheme, Press[u]);
-                    mshcol.Vertices.Add(msh.Vertices[u]);
-                    mshcol.VertexColors.SetColor(u, Cols[u]);
+                    //Cols[u] = Utilities.GetAbsoluteRGB(colourSheme, Press[u]);
+                    //mshcol.Vertices.Add(msh.Vertices[u]);
+                    //mshcol.VertexColors.SetColor(u, Cols[u]);
 
                     //string strval = Math.Round(Cp[u], 2).ToString();
                     string strval = Math.Round(Press[u], 2).ToString();
-                    Point3d plp = new Point3d(msh.Vertices[u].X, msh.Vertices[u].Y, msh.Vertices[u].Z);
+                    Point3d plp = new Point3d(faceCenter.X, faceCenter.Y, faceCenter.Z);
                     Vector3d vec = new Vector3d(-1, 0, 0);
                     Plane pl = new Plane(plp, vec);
 
@@ -169,6 +197,14 @@ namespace GHWind
                 for (int j = 0; j < msh.Faces.Count; j++)
                 {
                     mshcol.Faces.AddFace(msh.Faces[j].A, msh.Faces[j].B, msh.Faces[j].C, msh.Faces[j].D);
+                }
+
+                for (int i = 0; i < msh.Vertices.Count; i++)
+                {
+                    double vertexPress = de.get_pressure(msh.Vertices[i].X - origin[0], msh.Vertices[i].Y - origin[1], msh.Vertices[i].Z - origin[2]);
+                    Cols[i] = Utilities.GetAbsoluteRGB(colourSheme, vertexPress);
+                    mshcol.Vertices.Add(msh.Vertices[i]);
+                    mshcol.VertexColors.SetColor(i, Cols[i]);
                 }
 
 

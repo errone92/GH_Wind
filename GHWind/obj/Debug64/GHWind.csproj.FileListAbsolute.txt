@@ -9,7 +9,6 @@ c:\users\chwaibel\documents\visual studio 2015\Projects\GHWind\GHWind\obj\Debug6
 C:\Users\chwaibel\Documents\Visual Studio 2015\Projects\GHWind\GHWind\obj\Debug64\GHWind.csprojResolveAssemblyReference.cache
 C:\Users\erron\OneDrive - student.tudelft.nl\TU Delft\Yr 2\Graduation\GHWind repo\GH_Wind\GHWind\bin\GHWind.dll
 C:\Users\erron\OneDrive - student.tudelft.nl\TU Delft\Yr 2\Graduation\GHWind repo\GH_Wind\GHWind\bin\GHWind.pdb
-C:\Users\erron\OneDrive - student.tudelft.nl\TU Delft\Yr 2\Graduation\GHWind repo\GH_Wind\GHWind\bin\FastFluidSolverMT.pdb
 C:\Users\erron\OneDrive - student.tudelft.nl\TU Delft\Yr 2\Graduation\GHWind repo\GH_Wind\GHWind\obj\Debug64\GHWind.csprojResolveAssemblyReference.cache
 C:\Users\erron\OneDrive - student.tudelft.nl\TU Delft\Yr 2\Graduation\GHWind repo\GH_Wind\GHWind\obj\Debug64\GHWind.Properties.Resources.resources
 C:\Users\erron\OneDrive - student.tudelft.nl\TU Delft\Yr 2\Graduation\GHWind repo\GH_Wind\GHWind\obj\Debug64\GHWind.csproj.GenerateResource.cache

@@ -110,7 +110,7 @@ namespace GHWind
             int branch = 0;
 
             //vref and pdyn should be measured at the building height... 
-            double[] vref = de.get_velocity(0, zrefp[1] - origin[1], zrefp[2] - origin[2]);
+            double[] vref = de.get_velocity(zrefp[0] - origin[0], zrefp[1] - origin[1], zrefp[2] - origin[2]);
             Vector3d vrefv = new Vector3d(vref[0], vref[1], vref[2]);
             double vrefl = vrefv.Length;
             double pref = de.get_pressure(0, zrefp[1] - origin[1], zrefp[2] - origin[2]);
